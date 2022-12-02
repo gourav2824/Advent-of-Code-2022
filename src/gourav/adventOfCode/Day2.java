@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Day2 {
-    private static final int LOSE = 0;
+    private static final int LOSS = 0;
     private static final int DRAW = 3;
     private static final int WIN = 6;
 
@@ -45,14 +45,14 @@ public class Day2 {
         } else if ((opponent + 1) % 3 == response) {
             return WIN + response + 1;
         } else {
-            return LOSE + response + 1;
+            return LOSS + response + 1;
         }
     }
 
     private static int getGameResultBasedOnOutcome(int opponent, int outcome) {
         if (outcome == 0) {
             int response = ((opponent - 1) + 3) % 3;
-            return LOSE + response + 1;
+            return LOSS + response + 1;
         } else if (outcome == 1) {
             return DRAW + opponent + 1;
         } else {
