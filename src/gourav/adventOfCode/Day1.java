@@ -31,6 +31,8 @@ public class Day1 {
 
     private static List<Integer> getCaloriesFromInput() {
         final Scanner sc = new Scanner(System.in);
+        System.out.println("Please provide your input:");
+
         List<Integer> calories = new ArrayList<>();
         String input = sc.nextLine();
         int sum = 0;

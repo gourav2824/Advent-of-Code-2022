@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Day2 {
-    public static final int LOSE = 0;
-    public static final int DRAW = 3;
-    public static final int WIN = 6;
+    private static final int LOSE = 0;
+    private static final int DRAW = 3;
+    private static final int WIN = 6;
 
     public static void main(String[] args) {
         final List<char[]> strategy = getStrategyGuideFromInput();
@@ -63,6 +63,7 @@ public class Day2 {
 
     private static List<char[]> getStrategyGuideFromInput() {
         final Scanner sc = new Scanner(System.in);
+        System.out.println("Please provide your input:");
         String input = sc.nextLine();
 
         List<char[]> strategy = new ArrayList<>();
