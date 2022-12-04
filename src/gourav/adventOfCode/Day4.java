@@ -13,37 +13,23 @@ public class Day4 {
 
     private static int puzzle1(List<String> list) {
         int count = 0;
-
-        for (String pairs : list) {
-            String range1 = pairs.split(",")[0];
-            String range2 = pairs.split(",")[1];
-
-            final int[] pair1 = {Integer.parseInt(range1.split("-")[0]), Integer.parseInt(range1.split("-")[1])};
-            final int[] pair2 = {Integer.parseInt(range2.split("-")[0]), Integer.parseInt(range2.split("-")[1])};
-
-            if (isFullyContained(pair1, pair2)) {
+        for (String ranges : list) {
+            int[][] pairs = getPairs(ranges);
+            if (isFullyContained(pairs[0], pairs[1])) {
                 count++;
             }
         }
-
         return count;
     }
 
     private static int puzzle2(List<String> list) {
         int count = 0;
-
-        for (String pairs : list) {
-            String range1 = pairs.split(",")[0];
-            String range2 = pairs.split(",")[1];
-
-            final int[] pair1 = {Integer.parseInt(range1.split("-")[0]), Integer.parseInt(range1.split("-")[1])};
-            final int[] pair2 = {Integer.parseInt(range2.split("-")[0]), Integer.parseInt(range2.split("-")[1])};
-
-            if (!isSeparate(pair1, pair2)) {
+        for (String ranges : list) {
+            int[][] pairs = getPairs(ranges);
+            if (!isSeparate(pairs[0], pairs[1])) {
                 count++;
             }
         }
-
         return count;
     }
 
@@ -53,5 +39,15 @@ public class Day4 {
 
     private static boolean isSeparate(int[] pair1, int[] pair2) {
         return pair1[1] < pair2[0] || pair2[1] < pair1[0];
+    }
+
+    private static int[][] getPairs(String ranges) {
+        String range1 = ranges.split(",")[0];
+        String range2 = ranges.split(",")[1];
+
+        final int[] pair1 = {Integer.parseInt(range1.split("-")[0]), Integer.parseInt(range1.split("-")[1])};
+        final int[] pair2 = {Integer.parseInt(range2.split("-")[0]), Integer.parseInt(range2.split("-")[1])};
+
+        return new int[][]{pair1, pair2};
     }
 }
