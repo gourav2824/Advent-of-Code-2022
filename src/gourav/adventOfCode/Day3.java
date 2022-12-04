@@ -1,14 +1,14 @@
 package gourav.adventOfCode;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Scanner;
 import java.util.Set;
+
+import static gourav.adventOfCode.utils.AOCUtils.getListOfStringsFromInput;
 
 public class Day3 {
     public static void main(String[] args) {
-        final List<String> rucksacks = getRucksacksFromInput();
+        final List<String> rucksacks = getListOfStringsFromInput();
         System.out.println("Puzzle 1 Answer = " + puzzle1(rucksacks));
         System.out.println("Puzzle 2 Answer = " + puzzle2(rucksacks));
     }
@@ -65,20 +65,5 @@ public class Day3 {
     private static int getPriorityValue(char ch) {
         if (ch - 'A' < 26) return ch - 'A' + 27;
         else return ch - 'a' + 1;
-    }
-
-    private static List<String> getRucksacksFromInput() {
-        final Scanner sc = new Scanner(System.in);
-        System.out.println("Please provide your input:");
-        List<String> rucksacks = new ArrayList<>();
-        String input = sc.nextLine();
-
-        while (input.length() > 0) {
-            rucksacks.add(input);
-            input = sc.nextLine();
-        }
-
-        sc.close();
-        return rucksacks;
     }
 }

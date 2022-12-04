@@ -1,12 +1,12 @@
 package gourav.adventOfCode;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
+
+import static gourav.adventOfCode.utils.AOCUtils.getListOfStringsFromInput;
 
 public class Day4 {
     public static void main(String[] args) {
-        final List<String> list = getListFromInput();
+        final List<String> list = getListOfStringsFromInput();
         System.out.println("Puzzle 1 Answer = " + puzzle1(list));
         System.out.println("Puzzle 2 Answer = " + puzzle2(list));
     }
@@ -53,20 +53,5 @@ public class Day4 {
 
     private static boolean isSeparate(int[] pair1, int[] pair2) {
         return pair1[1] < pair2[0] || pair2[1] < pair1[0];
-    }
-
-    private static List<String> getListFromInput() {
-        final Scanner sc = new Scanner(System.in);
-        System.out.println("Please provide your input:");
-        List<String> list = new ArrayList<>();
-        String input = sc.nextLine();
-
-        while (input.length() > 0) {
-            list.add(input);
-            input = sc.nextLine();
-        }
-
-        sc.close();
-        return list;
     }
 }
