@@ -5,6 +5,14 @@ import java.util.List;
 import java.util.Scanner;
 
 public class AOCUtils {
+    public static String getStringFromInput() {
+        final Scanner sc = new Scanner(System.in);
+        System.out.println("Please provide your input:");
+        String input = sc.nextLine();
+        sc.close();
+        return input;
+    }
+
     public static List<String> getListOfStringsFromInput() {
         final Scanner sc = new Scanner(System.in);
         System.out.println("Please provide your input:");

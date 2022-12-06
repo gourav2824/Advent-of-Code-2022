@@ -1,12 +1,13 @@
 package gourav.adventOfCode;
 
 import java.util.HashSet;
-import java.util.Scanner;
 import java.util.Set;
+
+import static gourav.adventOfCode.utils.AOCUtils.getStringFromInput;
 
 public class Day6 {
     public static void main(String[] args) {
-        final String input = getInput();
+        final String input = getStringFromInput();
         System.out.println("Puzzle 1 Answer = " + puzzle1(input));
         System.out.println("Puzzle 2 Answer = " + puzzle2(input));
     }
@@ -29,22 +30,11 @@ public class Day6 {
             while (set.contains(ch)) {
                 set.remove(input.charAt(i++));
             }
-
             set.add(ch);
-            if (j - i + 1 == 14) {
-                return j + 1;
-            }
+            if (j - i + 1 == 14) return j + 1;
             j++;
         }
 
         return -1;
-    }
-
-    private static String getInput() {
-        final Scanner sc = new Scanner(System.in);
-        System.out.println("Please provide your input:");
-        String input = sc.nextLine();
-        sc.close();
-        return input;
     }
 }
