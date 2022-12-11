@@ -13,6 +13,7 @@ public class Day9 {
     public static void main(String[] args) {
         final List<List<String>> input = getInput();
         System.out.println("Puzzle 1 Answer = " + puzzle1(input));
+        System.out.println("Puzzle 2 Answer = " + puzzle2(input));
     }
 
     private static int puzzle1(List<List<String>> input) {
@@ -32,6 +33,31 @@ public class Day9 {
                 head[1] += dir.get(1);
                 updateTail(head, tail);
                 visited.add(Arrays.asList(tail[0], tail[1]));
+            }
+        }
+
+        return visited.size();
+    }
+
+    private static int puzzle2(List<List<String>> input) {
+        final Map<String, List<Integer>> directions = getDirectionsMap();
+        final int n = 10;
+        final int[][] knots = new int[n][2];
+
+        final Set<List<Integer>> visited = new HashSet<>();
+        visited.add(Arrays.asList(knots[n - 1][0], knots[n - 1][1]));
+
+        for (List<String> line : input) {
+            final List<Integer> dir = directions.get(line.get(0));
+            final int steps = Integer.parseInt(line.get(1));
+
+            for (int i = 0; i < steps; i++) {
+                knots[0][0] += dir.get(0);
+                knots[0][1] += dir.get(1);
+                for (int knot = 1; knot < n; knot++) {
+                    updateTail(knots[knot - 1], knots[knot]);
+                }
+                visited.add(Arrays.asList(knots[n - 1][0], knots[n - 1][1]));
             }
         }
 
