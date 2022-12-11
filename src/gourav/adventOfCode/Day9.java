@@ -16,42 +16,43 @@ public class Day9 {
     }
 
     private static int puzzle1(List<List<String>> input) {
-        final Set<List<Integer>> visited = new HashSet<>();
-        visited.add(Arrays.asList(0, 0));
-
         final Map<String, List<Integer>> directions = getDirectionsMap();
-        int hr = 0, hc = 0, tr = 0, tc = 0;
+        final int[] head = new int[2];
+        final int[] tail = new int[2];
+
+        final Set<List<Integer>> visited = new HashSet<>();
+        visited.add(Arrays.asList(tail[0], tail[1]));
 
         for (List<String> line : input) {
             final List<Integer> dir = directions.get(line.get(0));
             final int steps = Integer.parseInt(line.get(1));
 
             for (int i = 0; i < steps; i++) {
-                hr += dir.get(0);
-                hc += dir.get(1);
-
-                if (isNear(hr, hc, tr, tc)) {
-                    continue;
-                }
-
-                if (hr == tr) {
-                    tc += (hc < tc) ? -1 : 1;
-                } else if (hc == tc) {
-                    tr += (hr < tr) ? -1 : 1;
-                } else {
-                    tr += (hr < tr) ? -1 : 1;
-                    tc += (hc < tc) ? -1 : 1;
-                }
-
-                visited.add(Arrays.asList(tr, tc));
+                head[0] += dir.get(0);
+                head[1] += dir.get(1);
+                updateTail(head, tail);
+                visited.add(Arrays.asList(tail[0], tail[1]));
             }
         }
 
         return visited.size();
     }
 
-    private static boolean isNear(int hr, int hc, int tr, int tc) {
-        return (Math.abs(hr - tr) <= 1) && (Math.abs(hc - tc) <= 1);
+    private static void updateTail(int[] head, int[] tail) {
+        if (!isNear(head, tail)) {
+            if (head[0] == tail[0]) {
+                tail[1] += (head[1] < tail[1]) ? -1 : 1;
+            } else if (head[1] == tail[1]) {
+                tail[0] += (head[0] < tail[0]) ? -1 : 1;
+            } else {
+                tail[0] += (head[0] < tail[0]) ? -1 : 1;
+                tail[1] += (head[1] < tail[1]) ? -1 : 1;
+            }
+        }
+    }
+
+    private static boolean isNear(int[] head, int[] tail) {
+        return (Math.abs(head[0] - tail[0]) <= 1) && (Math.abs(head[1] - tail[1]) <= 1);
     }
 
     private static Map<String, List<Integer>> getDirectionsMap() {
