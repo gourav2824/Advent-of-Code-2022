@@ -2,8 +2,10 @@ package gourav.adventOfCode;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -14,56 +16,31 @@ public class Day9 {
     }
 
     private static int puzzle1(List<List<String>> input) {
-        Set<List<Integer>> visited = new HashSet<>();
+        final Set<List<Integer>> visited = new HashSet<>();
         visited.add(Arrays.asList(0, 0));
 
+        final Map<String, List<Integer>> directions = getDirectionsMap();
         int hr = 0, hc = 0, tr = 0, tc = 0;
 
         for (List<String> line : input) {
-            char ch = line.get(0).charAt(0);
-            int steps = Integer.parseInt(line.get(1));
+            final List<Integer> dir = directions.get(line.get(0));
+            final int steps = Integer.parseInt(line.get(1));
 
             for (int i = 0; i < steps; i++) {
-                if (ch == 'U') {
-                    hr -= 1;
-                } else if (ch == 'D') {
-                    hr += 1;
-                } else if (ch == 'L') {
-                    hc -= 1;
-                } else {
-                    hc += 1;
-                }
+                hr += dir.get(0);
+                hc += dir.get(1);
 
                 if (isNear(hr, hc, tr, tc)) {
                     continue;
                 }
 
                 if (hr == tr) {
-                    if (hc < tc) {
-                        tc -= 1;
-                    } else {
-                        tc += 1;
-                    }
+                    tc += (hc < tc) ? -1 : 1;
                 } else if (hc == tc) {
-                    if (hr < tr) {
-                        tr -= 1;
-                    } else {
-                        tr += 1;
-                    }
+                    tr += (hr < tr) ? -1 : 1;
                 } else {
-                    if (hr < tr && hc > tc) {
-                        tr -= 1;
-                        tc += 1;
-                    } else if (hr > tr && hc > tc) {
-                        tr += 1;
-                        tc += 1;
-                    } else if (hr > tr) {
-                        tr += 1;
-                        tc -= 1;
-                    } else {
-                        tr -= 1;
-                        tc -= 1;
-                    }
+                    tr += (hr < tr) ? -1 : 1;
+                    tc += (hc < tc) ? -1 : 1;
                 }
 
                 visited.add(Arrays.asList(tr, tc));
@@ -74,13 +51,16 @@ public class Day9 {
     }
 
     private static boolean isNear(int hr, int hc, int tr, int tc) {
-        int[][] dirs = {{0, 0}, {-1, 0}, {-1, -1}, {0, -1}, {1, -1}, {1, 0}, {1, 1}, {0, 1}, {-1, 1}};
-        for (int[] dir : dirs) {
-            if (hr + dir[0] == tr && hc + dir[1] == tc) {
-                return true;
-            }
-        }
-        return false;
+        return (Math.abs(hr - tr) <= 1) && (Math.abs(hc - tc) <= 1);
+    }
+
+    private static Map<String, List<Integer>> getDirectionsMap() {
+        final Map<String, List<Integer>> directions = new HashMap<>();
+        directions.put("U", Arrays.asList(-1, 0));
+        directions.put("D", Arrays.asList(1, 0));
+        directions.put("L", Arrays.asList(0, -1));
+        directions.put("R", Arrays.asList(0, 1));
+        return directions;
     }
 
     private static List<List<String>> getInput() {
