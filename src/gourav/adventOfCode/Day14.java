@@ -30,32 +30,26 @@ public class Day14 {
             }
         }
 
-        int count = 0;
+        int units = 0;
 
         while (true) {
-            int x = 500, y = 0;
-            while (x >= xMin && x <= xMax && y <= yMax) {
-                if (!cave.contains(Arrays.asList(x, y + 1))) {
-                    y += 1;
-                } else if (!cave.contains(Arrays.asList(x - 1, y + 1))) {
-                    x -= 1;
-                    y += 1;
-                } else if (!cave.contains(Arrays.asList(x + 1, y + 1))) {
-                    x += 1;
-                    y += 1;
-                } else {
-                    count++;
-                    cave.add(Arrays.asList(x, y));
-                    break;
-                }
+            final int[] sand = {500, 0};
+            boolean cameToRest = false;
+
+            while (!cameToRest && sand[0] >= xMin && sand[0] <= xMax && sand[1] <= yMax) {
+                cameToRest = moveSand(cave, sand);
             }
 
-            if (x < xMin || x > xMax || y > yMax) {
+            if (cameToRest) {
+                units++;
+            }
+
+            if (sand[0] < xMin || sand[0] > xMax || sand[1] > yMax) {
                 break;
             }
         }
 
-        return count;
+        return units;
     }
 
     private static int puzzle2(List<List<int[]>> listOfPaths) {
@@ -72,37 +66,47 @@ public class Day14 {
             }
         }
 
-        int count = 0;
+        int units = 0;
 
         while (true) {
-            int x = 500, y = 0;
-            if (cave.contains(Arrays.asList(x, y))) {
-                break;
+            final int[] sand = {500, 0};
+            boolean cameToRest = false;
+
+            while (!cameToRest && sand[1] <= yMax) {
+                cameToRest = moveSand(cave, sand);
             }
 
-            while (y <= yMax) {
-                if (!cave.contains(Arrays.asList(x, y + 1))) {
-                    y += 1;
-                } else if (!cave.contains(Arrays.asList(x - 1, y + 1))) {
-                    x -= 1;
-                    y += 1;
-                } else if (!cave.contains(Arrays.asList(x + 1, y + 1))) {
-                    x += 1;
-                    y += 1;
-                } else {
-                    count++;
-                    cave.add(Arrays.asList(x, y));
+            if (cameToRest) {
+                units++;
+                if (sand[0] == 500 && sand[1] == 0) {
                     break;
                 }
             }
 
-            if (y == yMax + 1) {
-                cave.add(Arrays.asList(x, y));
-                count++;
+            if (sand[1] == yMax + 1) {
+                cave.add(Arrays.asList(sand[0], sand[1]));
+                units++;
             }
         }
 
-        return count;
+        return units;
+    }
+
+    private static boolean moveSand(Set<List<Integer>> cave, int[] sand) {
+        boolean cameToRest = false;
+        if (!cave.contains(Arrays.asList(sand[0], sand[1] + 1))) {
+            sand[1] += 1;
+        } else if (!cave.contains(Arrays.asList(sand[0] - 1, sand[1] + 1))) {
+            sand[0] -= 1;
+            sand[1] += 1;
+        } else if (!cave.contains(Arrays.asList(sand[0] + 1, sand[1] + 1))) {
+            sand[0] += 1;
+            sand[1] += 1;
+        } else {
+            cave.add(Arrays.asList(sand[0], sand[1]));
+            cameToRest = true;
+        }
+        return cameToRest;
     }
 
     private static void drawLine(Set<List<Integer>> cave, int[] point1, int[] point2) {
