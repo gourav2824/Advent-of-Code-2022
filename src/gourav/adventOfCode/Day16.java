@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Scanner;
 
 public class Day16 {
@@ -18,19 +17,6 @@ public class Day16 {
             this.flowRate = 0;
             this.neighbors = new ArrayList<>();
         }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || this.getClass() != o.getClass()) return false;
-            final Valve valve = (Valve) o;
-            return Objects.equals(this.label, valve.label);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(label);
-        }
     }
 
     public static void main(String[] args) {
@@ -40,9 +26,10 @@ public class Day16 {
     }
 
     private static int puzzle1(Map<String, Valve> valveMap) {
+        final Valve source = valveMap.get("AA");
         final Map<String, Integer> valveIndexesMap = getValveIndexesMap(valveMap);
-        Map<Integer, Map<Long, Map<Integer, Integer>>> dp = new HashMap<>();
-        return getMaxPressure(valveMap.get("AA"), valveIndexesMap, 0, 30, dp);
+        final Map<Integer, Map<Long, Map<Integer, Integer>>> dp = new HashMap<>();
+        return getMaxPressure(source, valveIndexesMap, 0, 30, dp);
     }
 
     private static int getMaxPressure(Valve valve, Map<String, Integer> valveIndexesMap, long openValves, int minutes,
@@ -68,7 +55,6 @@ public class Day16 {
             max = Math.max(max, getMaxPressure(neighbor, valveIndexesMap, openValves, minutes - 1, dp));
         }
 
-        System.out.println(max);
         addValue(dp, index, openValves, minutes, max);
         return max;
     }
@@ -112,11 +98,11 @@ public class Day16 {
         while (input.length() > 0) {
             input.append(",");
             final String[] parts = input.toString().split(" ");
-            final Valve valve = addValve(valveMap, parts[1]);
+            final Valve valve = addValveInValveMap(valveMap, parts[1]);
             valve.flowRate = Integer.parseInt(parts[4].substring(parts[4].indexOf('=') + 1, parts[4].indexOf(';')));
 
             for (int i = 9; i < parts.length; i++) {
-                final Valve neighbor = addValve(valveMap, parts[i].substring(0, parts[i].indexOf(",")));
+                final Valve neighbor = addValveInValveMap(valveMap, parts[i].substring(0, parts[i].indexOf(",")));
                 valve.neighbors.add(neighbor);
             }
 
@@ -127,7 +113,7 @@ public class Day16 {
         return valveMap;
     }
 
-    private static Valve addValve(Map<String, Valve> valveMap, String valveLabel) {
+    private static Valve addValveInValveMap(Map<String, Valve> valveMap, String valveLabel) {
         if (!valveMap.containsKey(valveLabel)) {
             valveMap.put(valveLabel, new Valve(valveLabel));
         }
