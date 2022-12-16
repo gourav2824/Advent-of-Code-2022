@@ -23,17 +23,27 @@ public class Day16 {
         final Map<String, Valve> valveMap = getValveMapFromInput();
         System.out.println("Calculating...");
         System.out.println("Puzzle 1 Answer = " + puzzle1(valveMap));
+        System.out.println("Puzzle 2 Answer = " + puzzle2(valveMap));
     }
 
     private static int puzzle1(Map<String, Valve> valveMap) {
         final Valve source = valveMap.get("AA");
         final Map<String, Integer> valveIndexesMap = getValveIndexesMap(valveMap);
         final Map<Integer, Map<Long, Map<Integer, Integer>>> dp = new HashMap<>();
-        return getMaxPressure(source, valveIndexesMap, 0, 30, dp);
+        return getMaxPressureByMe(source, valveIndexesMap, 0, 30, dp);
     }
 
-    private static int getMaxPressure(Valve valve, Map<String, Integer> valveIndexesMap, long openValves, int minutes,
-                                      Map<Integer, Map<Long, Map<Integer, Integer>>> dp) {
+    private static int puzzle2(Map<String, Valve> valveMap) {
+        final Valve source = valveMap.get("AA");
+        final Map<String, Integer> valveIndexesMap = getValveIndexesMap(valveMap);
+        final Map<Boolean, Map<Integer, Map<Long, Map<Integer, Integer>>>> dp = new HashMap<>();
+        dp.put(true, new HashMap<>());
+        dp.put(false, new HashMap<>());
+        return getMaxPressure(source, valveIndexesMap, 0, 26, dp, true, valveMap);
+    }
+
+    private static int getMaxPressureByMe(Valve valve, Map<String, Integer> valveIndexesMap, long openValves, int minutes,
+                                          Map<Integer, Map<Long, Map<Integer, Integer>>> dp) {
         if (minutes == 0) {
             return 0;
         }
@@ -48,14 +58,59 @@ public class Day16 {
         if (valve.flowRate > 0 && (openValves & mask) == 0) {
             final long newOpenValves = openValves | mask;
             final int pressure = valve.flowRate * (minutes - 1);
-            max = Math.max(max, pressure + getMaxPressure(valve, valveIndexesMap, newOpenValves, minutes - 1, dp));
+            max = Math.max(max, pressure + getMaxPressureByMe(valve, valveIndexesMap, newOpenValves, minutes - 1, dp));
         }
 
         for (Valve neighbor : valve.neighbors) {
-            max = Math.max(max, getMaxPressure(neighbor, valveIndexesMap, openValves, minutes - 1, dp));
+            max = Math.max(max, getMaxPressureByMe(neighbor, valveIndexesMap, openValves, minutes - 1, dp));
         }
 
         addValue(dp, index, openValves, minutes, max);
+        return max;
+    }
+
+    private static int getMaxPressure(Valve valve, Map<String, Integer> valveIndexesMap, long openValves, int minutes,
+                                      Map<Boolean, Map<Integer, Map<Long, Map<Integer, Integer>>>> dp, boolean me,
+                                      Map<String, Valve> valveMap) {
+        if (minutes == 0) {
+            if (me) {
+                return getMaxPressure(valveMap.get("AA"), valveIndexesMap, openValves, 26, dp, false, valveMap);
+            } else {
+                return 0;
+            }
+        }
+
+        final int index = valveIndexesMap.get(valve.label);
+
+        if (dp.get(me).containsKey(index)) {
+            if (dp.get(me).get(index).containsKey(openValves)) {
+                if (dp.get(me).get(index).get(openValves).containsKey(minutes)) {
+                    return dp.get(me).get(index).get(openValves).get(minutes);
+                }
+            }
+        }
+
+        int max = 0;
+        final long mask = 1L << index;
+
+        if (valve.flowRate > 0 && (openValves & mask) == 0) {
+            final long newOpenValves = openValves | mask;
+            final int pressure = valve.flowRate * (minutes - 1);
+            max = Math.max(max, pressure + getMaxPressure(valve, valveIndexesMap, newOpenValves, minutes - 1, dp, me, valveMap));
+        }
+
+        for (Valve neighbor : valve.neighbors) {
+            max = Math.max(max, getMaxPressure(neighbor, valveIndexesMap, openValves, minutes - 1, dp, me, valveMap));
+        }
+
+        if (!dp.get(me).containsKey(index)) {
+            dp.get(me).put(index, new HashMap<>());
+        }
+        if (!dp.get(me).get(index).containsKey(openValves)) {
+            dp.get(me).get(index).put(openValves, new HashMap<>());
+        }
+        dp.get(me).get(index).get(openValves).put(minutes, max);
+
         return max;
     }
 
