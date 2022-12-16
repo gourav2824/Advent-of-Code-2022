@@ -58,7 +58,7 @@ public class Day16 {
         int max = 0;
         final long mask = 1L << index;
 
-        if ((openValves & mask) == 0) {
+        if (valve.flowRate > 0 && (openValves & mask) == 0) {
             final long newOpenValves = openValves | mask;
             final int pressure = valve.flowRate * (minutes - 1);
             max = Math.max(max, pressure + getMaxPressure(valve, valveIndexesMap, newOpenValves, minutes - 1, dp));
