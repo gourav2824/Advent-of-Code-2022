@@ -23,8 +23,9 @@ public class Day16 {
     private static final Map<String, Integer> valveIndexesMap = getValveIndexesMap();
 
     public static void main(String[] args) {
-        System.out.println("Calculating...");
+        System.out.println("Calculating Puzzle 1 Answer...");
         System.out.println("Puzzle 1 Answer = " + puzzle1());
+        System.out.println("Calculating Puzzle 2 Answer...");
         System.out.println("Puzzle 2 Answer = " + puzzle2());
     }
 
