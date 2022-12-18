@@ -16,18 +16,18 @@ public class Day18 {
     }
 
     private static int puzzle2(List<int[]> listOfCubes) {
-        int xMin = Integer.MAX_VALUE, yMin = Integer.MAX_VALUE, zMin = Integer.MAX_VALUE;
-        int xMax = Integer.MIN_VALUE, yMax = Integer.MIN_VALUE, zMax = Integer.MIN_VALUE;
+        double xMin = Integer.MAX_VALUE, yMin = Integer.MAX_VALUE, zMin = Integer.MAX_VALUE;
+        double xMax = Integer.MIN_VALUE, yMax = Integer.MIN_VALUE, zMax = Integer.MIN_VALUE;
 
-        final Set<List<Integer>> droplets = new HashSet<>();
-        final Set<List<Integer>> allFaces = new HashSet<>();
-        int[][] dirs = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}, {-1, 0, 0}, {0, -1, 0}, {0, 0, -1}};
+        final Set<List<Double>> droplets = new HashSet<>();
+        final Set<List<Double>> allFaces = new HashSet<>();
+        final double[][] dirs = {{0.5, 0, 0}, {0, 0.5, 0}, {0, 0, 0.5}, {-0.5, 0, 0}, {0, -0.5, 0}, {0, 0, -0.5}};
 
         for (int[] cube : listOfCubes) {
-            int x = cube[0], y = cube[1], z = cube[2];
+            final double x = cube[0], y = cube[1], z = cube[2];
             droplets.add(Arrays.asList(x, y, z));
 
-            for (int[] dir : dirs) {
+            for (double[] dir : dirs) {
                 allFaces.add(Arrays.asList(x + dir[0], y + dir[1], z + dir[2]));
             }
 
@@ -40,11 +40,11 @@ public class Day18 {
             zMax = Math.max(zMax, z);
         }
 
-        final Set<List<Integer>> openFaces = getAllOpenFaces(droplets, dirs, xMin - 1, yMin - 1, zMin - 1, xMax + 1, yMax + 1, zMax + 1);
+        final Set<List<Double>> openFaces = getAllOpenFaces(droplets, dirs, xMin - 1, yMin - 1, zMin - 1, xMax + 1, yMax + 1, zMax + 1);
 
         int count = 0;
 
-        for (List<Integer> face : allFaces) {
+        for (List<Double> face : allFaces) {
             if (openFaces.contains(face)) {
                 count++;
             }
@@ -53,27 +53,27 @@ public class Day18 {
         return count;
     }
 
-    private static Set<List<Integer>> getAllOpenFaces(Set<List<Integer>> droplets, int[][] dirs,
-                                                      int xMin, int yMin, int zMin, int xMax, int yMax, int zMax) {
-        final Queue<List<Integer>> queue = new LinkedList<>();
+    private static Set<List<Double>> getAllOpenFaces(Set<List<Double>> droplets, double[][] dirs,
+                                                     double xMin, double yMin, double zMin, double xMax, double yMax, double zMax) {
+        final Queue<List<Double>> queue = new LinkedList<>();
         queue.add(Arrays.asList(xMin, yMin, zMin));
 
-        final Set<List<Integer>> openDroplets = new HashSet<>();
+        final Set<List<Double>> openDroplets = new HashSet<>();
         openDroplets.add(Arrays.asList(xMin, yMin, zMin));
         
         while (queue.size() > 0) {
-            final List<Integer> rem = queue.remove();
+            final List<Double> rem = queue.remove();
 
-            for (int[] dir : dirs) {
-                final int x = rem.get(0) + dir[0];
-                final int y = rem.get(1) + dir[1];
-                final int z = rem.get(2) + dir[2];
+            for (double[] dir : dirs) {
+                final double x = rem.get(0) + dir[0] * 2;
+                final double y = rem.get(1) + dir[1] * 2;
+                final double z = rem.get(2) + dir[2] * 2;
 
                 if (x < xMin || y < yMin || z < zMin || x > xMax || y > yMax || z > zMax) {
                     continue;
                 }
 
-                final List<Integer> face = Arrays.asList(x, y, z);
+                final List<Double> face = Arrays.asList(x, y, z);
                 if (droplets.contains(face) || openDroplets.contains(face)) {
                     continue;
                 }
@@ -83,12 +83,12 @@ public class Day18 {
             }
         }
 
-        final Set<List<Integer>> openFaces = new HashSet<>();
+        final Set<List<Double>> openFaces = new HashSet<>();
 
-        for (List<Integer> droplet : openDroplets) {
-            for (int[] dir : dirs) {
-                final List<Integer> face = Arrays.asList(droplet.get(0) + dir[0], droplet.get(1) + dir[1], droplet.get(2) + dir[2]);
-                openFaces.add(face);
+        for (List<Double> droplet : openDroplets) {
+            final double x = droplet.get(0), y = droplet.get(1), z = droplet.get(2);
+            for (double[] dir : dirs) {
+                openFaces.add(Arrays.asList(x + dir[0], y + dir[1], z + dir[2]));
             }
         }
 
