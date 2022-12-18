@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
 
-public class Day18 {
+public class Day18Puzzle1 {
     private static class Face {
         int x1, y1, z1;
         int x2, y2, z2;
