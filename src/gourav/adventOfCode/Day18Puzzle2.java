@@ -1,13 +1,13 @@
 package gourav.adventOfCode;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-import java.util.Scanner;
 import java.util.Set;
+
+import static gourav.adventOfCode.Day18Puzzle1.getListOfCubesFromInput;
 
 public class Day18Puzzle2 {
     public static void main(String[] args) {
@@ -93,21 +93,5 @@ public class Day18Puzzle2 {
         }
 
         return openFaces;
-    }
-
-    public static List<int[]> getListOfCubesFromInput() {
-        final Scanner sc = new Scanner(System.in);
-        System.out.println("Please provide your input:");
-        final List<int[]> list = new ArrayList<>();
-        String input = sc.nextLine();
-
-        while (input.length() > 0) {
-            final String[] parts = input.split(",");
-            list.add(new int[]{Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2])});
-            input = sc.nextLine();
-        }
-
-        sc.close();
-        return list;
     }
 }
