@@ -9,7 +9,7 @@ import java.util.Queue;
 import java.util.Scanner;
 import java.util.Set;
 
-public class Day18 {
+public class Day18Puzzle2 {
     public static void main(String[] args) {
         final List<int[]> listOfCubes = getListOfCubesFromInput();
         System.out.println("Puzzle 2 Answer = " + puzzle2(listOfCubes));
