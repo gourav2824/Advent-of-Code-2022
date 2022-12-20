@@ -44,7 +44,10 @@ public class Day20 {
             long val = nums.get(index).val;
 
             boolean forward = val >= 0;
-            val = getValue(Math.abs(val), n);
+            val = getValue(Math.abs(val), n);       // Most important optimization
+            // Instead of running the loop till n since n is very, very large,
+            // we are finding a smaller value after which a same pattern will repeat,
+            // so don't need to run till n, just run till that value because both will give the same results.
 
             while (val-- > 0) {
                 index = rotateTheNumbers(nums, forward, index);
@@ -90,6 +93,7 @@ public class Day20 {
         return sum;
     }
 
+    // This function is responsible for all the optimization
     private static long getValue(long val, int n) {
         if (val / n > n) {
             return (val % n) + getValue(val / n, n);
