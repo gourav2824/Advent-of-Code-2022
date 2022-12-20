@@ -16,9 +16,9 @@ public class Day20 {
     }
 
     public static void main(String[] args) {
-        final List<Num> listOfNumbers = getListOfNumbersFromInput();
-        System.out.println("Puzzle 1 Answer = " + puzzle1(new ArrayList<>(listOfNumbers)));
-        System.out.println("Puzzle 2 Answer = " + puzzle2(new ArrayList<>(listOfNumbers)));
+        final List<Num> nums = getListOfNumsFromInput();
+        System.out.println("Puzzle 1 Answer = " + puzzle1(new ArrayList<>(nums)));
+        System.out.println("Puzzle 2 Answer = " + puzzle2(new ArrayList<>(nums)));
     }
 
     private static long puzzle1(List<Num> nums) {
@@ -47,37 +47,36 @@ public class Day20 {
             val = getValue(Math.abs(val), n);
 
             while (val-- > 0) {
+                index = rotateTheNumbers(nums, forward, index);
                 if (forward) {
-                    if (index == n - 1) {
-                        final Num num = nums.remove(n - 1);
-                        nums.add(0, num);
-                        index = 0;
-                    }
                     swap(nums, index, index + 1);
                     index++;
                 } else {
-                    if (index == 0) {
-                        final Num num = nums.remove(0);
-                        nums.add(num);
-                        index = n - 1;
-                    }
                     swap(nums, index, index - 1);
                     index--;
                 }
             }
 
-            if (forward) {
-                if (index == n - 1) {
-                    final Num num = nums.remove(n - 1);
-                    nums.add(0, num);
-                }
-            } else {
-                if (index == 0) {
-                    final Num num = nums.remove(0);
-                    nums.add(num);
-                }
+            rotateTheNumbers(nums, forward, index);
+        }
+    }
+
+    private static int rotateTheNumbers(List<Num> nums, boolean forward, int index) {
+        final int n = nums.size();
+        if (forward) {
+            if (index == n - 1) {
+                final Num num = nums.remove(n - 1);
+                nums.add(0, num);
+                index = 0;
+            }
+        } else {
+            if (index == 0) {
+                final Num num = nums.remove(0);
+                nums.add(num);
+                index = n - 1;
             }
         }
+        return index;
     }
 
     private static long getSum(List<Num> nums, int index) {
@@ -122,7 +121,7 @@ public class Day20 {
         nums.set(j, temp);
     }
 
-    private static List<Num> getListOfNumbersFromInput() {
+    private static List<Num> getListOfNumsFromInput() {
         final Scanner sc = new Scanner(System.in);
         System.out.println("Please provide your input:");
         int position = 0;
