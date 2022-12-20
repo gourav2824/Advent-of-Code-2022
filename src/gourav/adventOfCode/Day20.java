@@ -22,24 +22,19 @@ public class Day20 {
     }
 
     private static long puzzle1(List<Num> nums) {
-        final int n = nums.size();
         mixTheNumbers(nums);
-        return getSum(getIndexOfZero(nums), n, nums);
+        return getSum(nums, getIndexOfZero(nums));
     }
 
     private static long puzzle2(List<Num> nums) {
-        final int n = nums.size();
         final long decryptionKey = 811589153;
-
         for (Num num : nums) {
             num.val *= decryptionKey;
         }
-
         for (int i = 0; i < 10; i++) {
             mixTheNumbers(nums);
         }
-
-        return getSum(getIndexOfZero(nums), n, nums);
+        return getSum(nums, getIndexOfZero(nums));
     }
 
     private static void mixTheNumbers(List<Num> nums) {
@@ -49,7 +44,7 @@ public class Day20 {
             long val = nums.get(index).val;
 
             boolean forward = val >= 0;
-            val = getValue(n, Math.abs(val));
+            val = getValue(Math.abs(val), n);
 
             while (val-- > 0) {
                 if (forward) {
@@ -85,21 +80,10 @@ public class Day20 {
         }
     }
 
-    private static int getIndexOfZero(List<Num> nums) {
-        int index = -1;
-        for (int i = 0; i < nums.size(); i++) {
-            if (nums.get(i).val == 0) {
-                index = i;
-                break;
-            }
-        }
-        return index;
-    }
-
-    private static long getSum(int index, int n, List<Num> nums) {
+    private static long getSum(List<Num> nums, int index) {
         long sum = 0;
         for (int i = 1; i <= 3000; i++) {
-            index = (index + 1) % n;
+            index = (index + 1) % nums.size();
             if (i == 1000 || i == 2000 || i == 3000) {
                 sum += nums.get(index).val;
             }
@@ -107,9 +91,9 @@ public class Day20 {
         return sum;
     }
 
-    private static long getValue(int n, long val) {
+    private static long getValue(long val, int n) {
         if (val / n > n) {
-            return (val % n) + getValue(n, val / n);
+            return (val % n) + getValue(val / n, n);
         }
         return (val % n) + (val / n);
     }
@@ -117,6 +101,15 @@ public class Day20 {
     private static int getNumIndex(List<Num> nums, int pos) {
         for (int i = 0; i < nums.size(); i++) {
             if (nums.get(i).pos == pos) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private static int getIndexOfZero(List<Num> nums) {
+        for (int i = 0; i < nums.size(); i++) {
+            if (nums.get(i).val == 0) {
                 return i;
             }
         }
