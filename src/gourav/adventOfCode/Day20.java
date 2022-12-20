@@ -51,7 +51,7 @@ public class Day20 {
             int val = nums.get(index).val;
 
             boolean forward = val >= 0;
-            val = Math.abs(val);
+            val = (Math.abs(val) % n) + (Math.abs(val) / n);
 
             while (val-- > 0) {
                 if (forward) {
@@ -62,8 +62,7 @@ public class Day20 {
                     }
                     swap(nums, index, index + 1);
                     index++;
-                }
-                else {
+                } else {
                     if (index == 0) {
                         final Num num = nums.remove(0);
                         nums.add(num);
