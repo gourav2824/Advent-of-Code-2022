@@ -1,4 +1,6 @@
 fileignoreconfig:
 - filename: src/gourav/adventOfCode/Day20.java
   checksum: a3ba2e13f833f3b289265ec692343fe8acb78cdf87b5d331d975a667254e2583
+- filename: src/gourav/adventOfCode/Day21.java
+  checksum: 78bee07fb230491a7fdce93ce85b3082a100d0934cb208f0e42c28a02556073c
 version: "1.0"
