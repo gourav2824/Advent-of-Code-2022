@@ -14,19 +14,36 @@ public class Day23 {
     public static void main(String[] args) {
         final List<String> input = getListOfStringsFromInput();
         System.out.println("Puzzle 1 Answer = " + puzzle1(input));
+        System.out.println("Puzzle 2 Answer = " + puzzle2(input));
     }
 
     private static int puzzle1(List<String> input) {
         final Set<List<Integer>> elves = getElves(input);
         final List<Character> dirs = new ArrayList<>(Arrays.asList('N', 'S', 'W', 'E'));
+
         for (int round = 0; round < 10; round++) {
             moveElves(elves, dirs);
         }
         return getCountOfEmptyGroundTiles(elves);
     }
 
-    private static void moveElves(Set<List<Integer>> elves, List<Character> dirs) {
+    private static int puzzle2(List<String> input) {
+        final Set<List<Integer>> elves = getElves(input);
+        final List<Character> dirs = new ArrayList<>(Arrays.asList('N', 'S', 'W', 'E'));
+
+        int rounds = 0;
+        while (true) {
+            rounds++;
+            if (!moveElves(elves, dirs)) {
+                return rounds;
+            }
+        }
+    }
+
+    private static boolean moveElves(Set<List<Integer>> elves, List<Character> dirs) {
+        boolean hasAnyElfMoved = false;
         Map<List<Integer>, List<List<Integer>>> map = new HashMap<>();
+
         for (List<Integer> elf : elves) {
             if (!isThereAnyNeighbourInAnyDirection(elves, elf)) {
                 continue;
@@ -37,30 +54,31 @@ public class Day23 {
                     if (!isThereAnyNeighbourInNorth(elves, elf)) {
                         final int x = elf.get(0) - 1, y = elf.get(1);
                         map.computeIfAbsent(Arrays.asList(x, y), k -> new ArrayList<>()).add(elf);
+                        hasAnyElfMoved = true;
                         break;
                     }
                 }
-
                 if (dir == 'S') {
                     if (!isThereAnyNeighbourInSouth(elves, elf)) {
                         final int x = elf.get(0) + 1, y = elf.get(1);
                         map.computeIfAbsent(Arrays.asList(x, y), k -> new ArrayList<>()).add(elf);
+                        hasAnyElfMoved = true;
                         break;
                     }
                 }
-
                 if (dir == 'W') {
                     if (!isThereAnyNeighbourInWest(elves, elf)) {
                         final int x = elf.get(0), y = elf.get(1) - 1;
                         map.computeIfAbsent(Arrays.asList(x, y), k -> new ArrayList<>()).add(elf);
+                        hasAnyElfMoved = true;
                         break;
                     }
                 }
-
                 if (dir == 'E') {
                     if (!isThereAnyNeighbourInEast(elves, elf)) {
                         final int x = elf.get(0), y = elf.get(1) + 1;
                         map.computeIfAbsent(Arrays.asList(x, y), k -> new ArrayList<>()).add(elf);
+                        hasAnyElfMoved = true;
                         break;
                     }
                 }
@@ -76,6 +94,8 @@ public class Day23 {
                 elves.remove(map.get(pos).get(0));
             }
         }
+
+        return hasAnyElfMoved;
     }
 
     private static int getCountOfEmptyGroundTiles(Set<List<Integer>> elves) {
