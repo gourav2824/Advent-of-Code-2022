@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class Day8 {
+public class Day08 {
     public static void main(String[] args) {
         final List<List<Integer>> trees = getTreesFromInput();
         System.out.println("Puzzle 1 Answer = " + puzzle1(trees));

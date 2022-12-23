@@ -4,7 +4,7 @@ import java.util.List;
 
 import static gourav.adventOfCode.utils.AOCUtils.getListOfStringsFromInput;
 
-public class Day4 {
+public class Day04 {
     public static void main(String[] args) {
         final List<String> list = getListOfStringsFromInput();
         System.out.println("Puzzle 1 Answer = " + puzzle1(list));

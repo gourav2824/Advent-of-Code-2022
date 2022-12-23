@@ -6,7 +6,7 @@ import java.util.Set;
 
 import static gourav.adventOfCode.utils.AOCUtils.getListOfStringsFromInput;
 
-public class Day3 {
+public class Day03 {
     public static void main(String[] args) {
         final List<String> rucksacks = getListOfStringsFromInput();
         System.out.println("Puzzle 1 Answer = " + puzzle1(rucksacks));

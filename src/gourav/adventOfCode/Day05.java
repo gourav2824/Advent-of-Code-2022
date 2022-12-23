@@ -6,7 +6,7 @@ import java.util.Stack;
 
 import static gourav.adventOfCode.utils.AOCUtils.getListOfStringsFromInput;
 
-public class Day5 {
+public class Day05 {
     public static void main(String[] args) {
         final List<String> steps = getListOfStringsFromInput();
         System.out.println("Puzzle 1 Answer = " + puzzle1(getStacksFromInput(), steps));

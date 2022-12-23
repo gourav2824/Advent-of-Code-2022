@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 
-public class Day9 {
+public class Day09 {
     public static void main(String[] args) {
         final List<List<String>> input = getInput();
         System.out.println("Puzzle 1 Answer = " + puzzle1(input));

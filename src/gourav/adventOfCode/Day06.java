@@ -5,7 +5,7 @@ import java.util.Set;
 
 import static gourav.adventOfCode.utils.AOCUtils.getStringFromInput;
 
-public class Day6 {
+public class Day06 {
     public static void main(String[] args) {
         final String input = getStringFromInput();
         System.out.println("Puzzle 1 Answer = " + puzzle1(input));

@@ -8,7 +8,7 @@ import java.util.TreeSet;
 
 import static gourav.adventOfCode.utils.AOCUtils.getListOfStringsFromInput;
 
-public class Day7 {
+public class Day07 {
     private static int puzzle1Answer = 0;
     private static final TreeSet<Integer> dirSizes = new TreeSet<>();
 
