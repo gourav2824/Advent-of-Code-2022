@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
-public class Day1 {
+public class Day01 {
     public static void main(String[] args) {
         final List<Integer> calories = getCaloriesFromInput();
         System.out.println("Puzzle 1 Answer = " + puzzle1(calories));

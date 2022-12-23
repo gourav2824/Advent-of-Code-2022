@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class Day2 {
+public class Day02 {
     private static final int LOSS = 0;
     private static final int DRAW = 3;
     private static final int WIN = 6;
