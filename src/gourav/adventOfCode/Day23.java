@@ -17,21 +17,11 @@ public class Day23 {
     }
 
     private static int puzzle1(List<String> input) {
-        final Set<List<Integer>> elves = new HashSet<>();
-        for (int i = 0; i < input.size(); i++) {
-            for (int j = 0; j < input.get(i).length(); j++) {
-                if (input.get(i).charAt(j) == '#') {
-                    elves.add(Arrays.asList(i, j));
-                }
-            }
-        }
-
+        final Set<List<Integer>> elves = getElves(input);
         final List<Character> dirs = new ArrayList<>(Arrays.asList('N', 'S', 'W', 'E'));
-
         for (int round = 0; round < 10; round++) {
             moveElves(elves, dirs);
         }
-
         return getCountOfEmptyGroundTiles(elves);
     }
 
@@ -108,6 +98,18 @@ public class Day23 {
             }
         }
         return count;
+    }
+
+    private static Set<List<Integer>> getElves(List<String> input) {
+        final Set<List<Integer>> elves = new HashSet<>();
+        for (int i = 0; i < input.size(); i++) {
+            for (int j = 0; j < input.get(i).length(); j++) {
+                if (input.get(i).charAt(j) == '#') {
+                    elves.add(Arrays.asList(i, j));
+                }
+            }
+        }
+        return elves;
     }
 
     private static boolean isThereAnyNeighbourInAnyDirection(Set<List<Integer>> elves, List<Integer> elf) {
