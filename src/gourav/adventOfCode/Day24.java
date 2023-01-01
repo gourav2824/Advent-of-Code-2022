@@ -53,9 +53,18 @@ public class Day24 {
             blockersTillTimeT.add(new HashMap<>(blockers));
         }
 
+        final int[] start = {0, 1};
+        final int[] end = {m - 1, n - 2};
+        final int initialTime = 0;
+
+        return calculateTimeFromSourceToDestination(m, n, blockersTillTimeT, start, end, initialTime);
+    }
+
+    private static int calculateTimeFromSourceToDestination(int m, int n, List<Map<List<Integer>, List<Character>>> blockersTillTimeT,
+                                                            int[] start, int[] end, int initialTime) {
         final Set<List<Integer>> visited = new HashSet<>();
         final Queue<Cell> queue = new LinkedList<>();
-        queue.add(new Cell(0, 1, 0));
+        queue.add(new Cell(start[0], start[1], initialTime));
 
         while (queue.size() > 0) {
             final Cell rem = queue.remove();
@@ -65,7 +74,7 @@ public class Day24 {
                 continue;
             }
 
-            if (r == m - 1 && c == n - 2) {
+            if (r == end[0] && c == end[1]) {
                 return t;
             }
 
