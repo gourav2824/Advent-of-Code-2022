@@ -33,25 +33,8 @@ public class Day24 {
     }
 
     private static int puzzle1(List<String> input) {
-        Map<List<Integer>, List<Character>> blockers = new HashMap<>();
         final int m = input.size(), n = input.get(0).length();
-
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < n; j++) {
-                final char ch = input.get(i).charAt(j);
-                if (ch != '.') {
-                    blockers.put(Arrays.asList(i, j), Collections.singletonList(ch));
-                }
-            }
-        }
-
-        final List<Map<List<Integer>, List<Character>>> blockersTillTimeT = new ArrayList<>();
-        blockersTillTimeT.add(new HashMap<>(blockers));
-
-        for (int t = 1; t < m * n; t++) {
-            blockers = moveBlizzards(blockers, m, n);
-            blockersTillTimeT.add(new HashMap<>(blockers));
-        }
+        final List<Map<List<Integer>, List<Character>>> blockersTillTimeT = getListOfBlockersMapTillTimeT(input);
 
         final int[] start = {0, 1};
         final int[] end = {m - 1, n - 2};
@@ -97,6 +80,30 @@ public class Day24 {
         }
 
         return -1;
+    }
+
+    private static List<Map<List<Integer>, List<Character>>> getListOfBlockersMapTillTimeT(List<String> input) {
+        final int m = input.size(), n = input.get(0).length();
+        Map<List<Integer>, List<Character>> blockers = new HashMap<>();
+
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                final char ch = input.get(i).charAt(j);
+                if (ch != '.') {
+                    blockers.put(Arrays.asList(i, j), Collections.singletonList(ch));
+                }
+            }
+        }
+
+        final List<Map<List<Integer>, List<Character>>> blockersTillTimeT = new ArrayList<>();
+        blockersTillTimeT.add(new HashMap<>(blockers));
+
+        for (int t = 1; t < m * n; t++) {
+            blockers = moveBlizzards(blockers, m, n);
+            blockersTillTimeT.add(new HashMap<>(blockers));
+        }
+
+        return blockersTillTimeT;
     }
 
     private static Map<List<Integer>, List<Character>> moveBlizzards(Map<List<Integer>, List<Character>> blockers, int m, int n) {
