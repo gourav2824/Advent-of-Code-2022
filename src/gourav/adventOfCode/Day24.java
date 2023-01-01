@@ -1,9 +1,15 @@
 package gourav.adventOfCode;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
 
 import static gourav.adventOfCode.utils.AOCUtils.getListOfStringsFromInput;
 
@@ -11,115 +17,106 @@ public class Day24 {
     private static class Cell {
         int r;
         int c;
-        List<List<List<Character>>> board;
         int minutes;
 
-        public Cell(int r, int c, List<List<List<Character>>> board, int minute) {
+        public Cell(int r, int c, int minute) {
             this.r = r;
             this.c = c;
-            this.board = board;
             this.minutes = minute;
         }
     }
 
     public static void main(String[] args) {
         final List<String> input = getListOfStringsFromInput();
+        System.out.println("Calculating Puzzle 1 Answer...");
         System.out.println("Puzzle 1 Answer = " + puzzle1(input));
     }
 
     private static int puzzle1(List<String> input) {
-        final List<List<List<Character>>> board = new ArrayList<>();
+        Map<List<Integer>, List<Character>> blockers = new HashMap<>();
+        final int m = input.size(), n = input.get(0).length();
 
-        for (String line : input) {
-            List<List<Character>> row = new ArrayList<>();
-            for (char ch : line.toCharArray()) {
-                List<Character> cell = new ArrayList<>();
-                if (ch != '.') cell.add(ch);
-                row.add(cell);
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                final char ch = input.get(i).charAt(j);
+                if (ch != '.') {
+                    blockers.put(Arrays.asList(i, j), Collections.singletonList(ch));
+                }
             }
-            board.add(row);
         }
 
-        final int m = board.size(), n = board.get(0).size();
-        Queue<Cell> queue = new LinkedList<>();
-        queue.add(new Cell(0, 1, board, 0));
+        final List<Map<List<Integer>, List<Character>>> blockersTillTimeT = new ArrayList<>();
+        blockersTillTimeT.add(new HashMap<>(blockers));
+
+        for (int t = 1; t < m * n; t++) {
+            blockers = moveBlizzards(blockers, m, n);
+            blockersTillTimeT.add(new HashMap<>(blockers));
+        }
+
+        final Set<List<Integer>> visited = new HashSet<>();
+        final Queue<Cell> queue = new LinkedList<>();
+        queue.add(new Cell(0, 1, 0));
 
         while (queue.size() > 0) {
             final Cell rem = queue.remove();
-            final int r = rem.r, c = rem.c;
+            final int r = rem.r, c = rem.c, t = rem.minutes;
 
-            if (r < 0 || c < 0 || r >= m || c >= n || rem.board.get(r).get(c).size() > 0) {
+            if (r < 0 || c < 0 || r >= m || c >= n) {
                 continue;
             }
 
             if (r == m - 1 && c == n - 2) {
-                return rem.minutes;
+                return t;
             }
 
-            final List<List<List<Character>>> newBoard = moveBlizzards(rem.board);
+            final Map<List<Integer>, List<Character>> blockersAtT = blockersTillTimeT.get(t);
+            if (blockersAtT.containsKey(Arrays.asList(r, c)) && blockersAtT.get(Arrays.asList(r, c)).size() > 0) {
+                continue;
+            }
 
-            queue.add(new Cell(r, c, newBoard, rem.minutes + 1));
-            queue.add(new Cell(r - 1, c, newBoard, rem.minutes + 1));
-            queue.add(new Cell(r + 1, c, newBoard, rem.minutes + 1));
-            queue.add(new Cell(r, c - 1, newBoard, rem.minutes + 1));
-            queue.add(new Cell(r, c + 1, newBoard, rem.minutes + 1));
+            final List<Integer> state = Arrays.asList(r, c, t);
+            if (visited.contains(state)) {
+                continue;
+            }
+            visited.add(state);
+
+            queue.add(new Cell(r, c, t + 1));
+            queue.add(new Cell(r - 1, c, t + 1));
+            queue.add(new Cell(r + 1, c, t + 1));
+            queue.add(new Cell(r, c - 1, t + 1));
+            queue.add(new Cell(r, c + 1, t + 1));
         }
 
         return -1;
     }
 
-    private static void display(List<List<List<Character>>> board) {
-        for (List<List<Character>> row : board) {
-            for (List<Character> cell : row) {
-                System.out.print("[");
-                for (char ch : cell) {
-                    System.out.print(ch + " ");
+    private static Map<List<Integer>, List<Character>> moveBlizzards(Map<List<Integer>, List<Character>> blockers, int m, int n) {
+        final Map<List<Integer>, List<Character>> newBlockers = new HashMap<>();
+
+        for (List<Integer> blocker : blockers.keySet()) {
+            final int i = blocker.get(0), j = blocker.get(1);
+            for (char ch : blockers.get(blocker)) {
+                int r, c;
+                if (ch == '^') {
+                    r = i - 1 > 0 ? i - 1 : m - 2;
+                    c = j;
+                } else if (ch == 'v') {
+                    r = i + 1 < m - 1 ? i + 1 : 1;
+                    c = j;
+                } else if (ch == '<') {
+                    r = i;
+                    c = j - 1 > 0 ? j - 1 : n - 2;
+                } else if (ch == '>') {
+                    r = i;
+                    c = j + 1 < n - 1 ? j + 1 : 1;
+                } else {
+                    r = i;
+                    c = j;
                 }
-                System.out.print("]");
-            }
-            System.out.println();
-        }
-        System.out.println();
-    }
-
-    private static List<List<List<Character>>> moveBlizzards(List<List<List<Character>>> board) {
-        final int m = board.size(), n = board.get(0).size();
-        final List<List<List<Character>>> newBoard = getNewEmptyBoard(m, n);
-
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < n; j++) {
-                for (char ch : board.get(i).get(j)) {
-                    if (ch == '#') {
-                        newBoard.get(i).get(j).add(ch);
-                    } else if (ch == '^') {
-                        final int r = i - 1 > 0 ? i - 1 : m - 2;
-                        newBoard.get(r).get(j).add(ch);
-                    } else if (ch == 'v') {
-                        final int r = i + 1 < m - 1 ? i + 1 : 1;
-                        newBoard.get(r).get(j).add(ch);
-                    } else if (ch == '<') {
-                        final int c = j - 1 > 0 ? j - 1 : n - 2;
-                        newBoard.get(i).get(c).add(ch);
-                    } else if (ch == '>') {
-                        final int c = j + 1 < n - 1 ? j + 1 : 1;
-                        newBoard.get(i).get(c).add(ch);
-                    }
-                }
+                newBlockers.computeIfAbsent(Arrays.asList(r, c), k -> new ArrayList<>()).add(ch);
             }
         }
 
-        return newBoard;
-    }
-
-    private static List<List<List<Character>>> getNewEmptyBoard(int m, int n) {
-        final List<List<List<Character>>> newBoard = new ArrayList<>();
-        for (int i = 0; i < m; i++) {
-            List<List<Character>> row = new ArrayList<>();
-            for (int j = 0; j < n; j++) {
-                row.add(new ArrayList<>());
-            }
-            newBoard.add(row);
-        }
-        return newBoard;
+        return newBlockers;
     }
 }
