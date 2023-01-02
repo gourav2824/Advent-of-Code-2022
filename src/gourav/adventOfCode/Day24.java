@@ -62,10 +62,13 @@ public class Day24 {
         final int[] start = {0, 1};
         final int[] end = {m - 1, n - 2};
 
+        // We are doing simple BFS here and maintaining a visited set for states that are already seen before.
+
         final Set<List<Integer>> visited = new HashSet<>();
         final Queue<List<Integer>> queue = new LinkedList<>();
         queue.add(Arrays.asList(start[0], start[1], 0));
 
+        // *** BFS ***
         while (queue.size() > 0) {
             final List<Integer> rem = queue.remove();
             final int r = rem.get(0), c = rem.get(1), t = rem.get(2);
@@ -103,10 +106,13 @@ public class Day24 {
         final int[] start = {0, 1};
         final int[] end = {m - 1, n - 2};
 
+        // We are doing simple BFS here and maintaining a visited set for states that are already seen before.
+
         final Set<Cell> visited = new HashSet<>();
         final Queue<Cell> queue = new LinkedList<>();
         queue.add(new Cell(start[0], start[1], 0, false, false));
 
+        // *** BFS ***
         while (queue.size() > 0) {
             final Cell rem = queue.remove();
             final int r = rem.r, c = rem.c, t = rem.time;
@@ -148,6 +154,13 @@ public class Day24 {
         return -1;
     }
 
+    // *** Space Optimization ***
+    // We have to do below pre-processing to save some memory space.
+    // Instead of creating the below list of maps of blockers beforehand,
+    // we can create map of blockers for time t from time t + 1 at runtime whenever needed, and
+    // we can pass the map of blockers as a parameter to the queue of BFS but that will take more space
+    // because we will have to pass map of blockers in every call or every entry of the queue
+
     private static List<Map<List<Integer>, List<Character>>> getListOfBlockersMapTillTimeT(List<String> input) {
         final int m = input.size(), n = input.get(0).length();
         Map<List<Integer>, List<Character>> blockers = new HashMap<>();
@@ -163,6 +176,13 @@ public class Day24 {
 
         final List<Map<List<Integer>, List<Character>>> blockersTillTimeT = new ArrayList<>();
         blockersTillTimeT.add(new HashMap<>(blockers));
+
+        // *** Time optimization ***
+        // Here, we are calculating the maps of blockers till time t = (2 * m * n) because
+        // in puzzle 2, we have to cover our grid 3 times overall in 3 journeys.
+        // Ideally, the time should be (3 * m * n) because of 3 journeys but that much time will not be required as
+        // we will not traverse each and every cell during a journey due to blockers.
+        // So, we can take some lesser time which will work for a particular problem by doing some hit and trial.
 
         for (int t = 1; t < 2 * m * n; t++) {
             blockers = moveBlizzards(blockers, m, n);
