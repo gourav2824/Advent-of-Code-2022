@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 
@@ -17,41 +18,57 @@ public class Day24 {
     private static class Cell {
         int r;
         int c;
-        int minutes;
+        int time;
+        boolean isJourney1Done;
+        boolean isJourney2Done;
 
-        public Cell(int r, int c, int minute) {
+        public Cell(int r, int c, int minutes, boolean isJourney1Done, boolean isJourney2Done) {
             this.r = r;
             this.c = c;
-            this.minutes = minute;
+            this.time = minutes;
+            this.isJourney1Done = isJourney1Done;
+            this.isJourney2Done = isJourney2Done;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            final Cell cell = (Cell) o;
+            return r == cell.r && c == cell.c && time == cell.time && isJourney1Done == cell.isJourney1Done && isJourney2Done == cell.isJourney2Done;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(r, c, time, isJourney1Done, isJourney2Done);
         }
     }
 
     public static void main(String[] args) {
         final List<String> input = getListOfStringsFromInput();
-        System.out.println("Calculating Puzzle 1 Answer...");
-        System.out.println("Puzzle 1 Answer = " + puzzle1(input));
-    }
-
-    private static int puzzle1(List<String> input) {
         final int m = input.size(), n = input.get(0).length();
+
+        System.out.println("Pre-processing...");
         final List<Map<List<Integer>, List<Character>>> blockersTillTimeT = getListOfBlockersMapTillTimeT(input);
 
-        final int[] start = {0, 1};
-        final int[] end = {m - 1, n - 2};
-        final int initialTime = 0;
+        System.out.println("Calculating Puzzle 1 Answer...");
+        System.out.println("Puzzle 1 Answer = " + puzzle1(m, n, blockersTillTimeT));
 
-        return calculateTimeFromSourceToDestination(m, n, blockersTillTimeT, start, end, initialTime);
+        System.out.println("Calculating Puzzle 2 Answer...");
+        System.out.println("Puzzle 2 Answer = " + puzzle2(m, n, blockersTillTimeT));
     }
 
-    private static int calculateTimeFromSourceToDestination(int m, int n, List<Map<List<Integer>, List<Character>>> blockersTillTimeT,
-                                                            int[] start, int[] end, int initialTime) {
+    private static int puzzle1(int m, int n, List<Map<List<Integer>, List<Character>>> blockersTillTimeT) {
+        final int[] start = {0, 1};
+        final int[] end = {m - 1, n - 2};
+
         final Set<List<Integer>> visited = new HashSet<>();
-        final Queue<Cell> queue = new LinkedList<>();
-        queue.add(new Cell(start[0], start[1], initialTime));
+        final Queue<List<Integer>> queue = new LinkedList<>();
+        queue.add(Arrays.asList(start[0], start[1], 0));
 
         while (queue.size() > 0) {
-            final Cell rem = queue.remove();
-            final int r = rem.r, c = rem.c, t = rem.minutes;
+            final List<Integer> rem = queue.remove();
+            final int r = rem.get(0), c = rem.get(1), t = rem.get(2);
 
             if (r < 0 || c < 0 || r >= m || c >= n) {
                 continue;
@@ -72,11 +89,60 @@ public class Day24 {
             }
             visited.add(state);
 
-            queue.add(new Cell(r, c, t + 1));
-            queue.add(new Cell(r - 1, c, t + 1));
-            queue.add(new Cell(r + 1, c, t + 1));
-            queue.add(new Cell(r, c - 1, t + 1));
-            queue.add(new Cell(r, c + 1, t + 1));
+            queue.add(Arrays.asList(r, c, t + 1));
+            queue.add(Arrays.asList(r - 1, c, t + 1));
+            queue.add(Arrays.asList(r + 1, c, t + 1));
+            queue.add(Arrays.asList(r, c - 1, t + 1));
+            queue.add(Arrays.asList(r, c + 1, t + 1));
+        }
+
+        return -1;
+    }
+
+    private static int puzzle2(int m, int n, List<Map<List<Integer>, List<Character>>> blockersTillTimeT) {
+        final int[] start = {0, 1};
+        final int[] end = {m - 1, n - 2};
+
+        final Set<Cell> visited = new HashSet<>();
+        final Queue<Cell> queue = new LinkedList<>();
+        queue.add(new Cell(start[0], start[1], 0, false, false));
+
+        while (queue.size() > 0) {
+            final Cell rem = queue.remove();
+            final int r = rem.r, c = rem.c, t = rem.time;
+            boolean isJourney1Done = rem.isJourney1Done, isJourney2Done = rem.isJourney2Done;
+
+            if (r < 0 || c < 0 || r >= m || c >= n) {
+                continue;
+            }
+
+            if (!isJourney1Done && r == end[0] && c == end[1]) {
+                isJourney1Done = true;
+            }
+
+            if (isJourney1Done && r == 0 && c == 1) {
+                isJourney2Done = true;
+            }
+
+            if (isJourney2Done && r == end[0] && c == end[1]) {
+                return t;
+            }
+
+            final Map<List<Integer>, List<Character>> blockersAtT = blockersTillTimeT.get(t);
+            if (blockersAtT.containsKey(Arrays.asList(r, c)) && blockersAtT.get(Arrays.asList(r, c)).size() > 0) {
+                continue;
+            }
+
+            if (visited.contains(rem)) {
+                continue;
+            }
+            visited.add(rem);
+
+            queue.add(new Cell(r, c, t + 1, isJourney1Done, isJourney2Done));
+            queue.add(new Cell(r - 1, c, t + 1, isJourney1Done, isJourney2Done));
+            queue.add(new Cell(r + 1, c, t + 1, isJourney1Done, isJourney2Done));
+            queue.add(new Cell(r, c - 1, t + 1, isJourney1Done, isJourney2Done));
+            queue.add(new Cell(r, c + 1, t + 1, isJourney1Done, isJourney2Done));
         }
 
         return -1;
@@ -98,7 +164,7 @@ public class Day24 {
         final List<Map<List<Integer>, List<Character>>> blockersTillTimeT = new ArrayList<>();
         blockersTillTimeT.add(new HashMap<>(blockers));
 
-        for (int t = 1; t < m * n; t++) {
+        for (int t = 1; t < 2 * m * n; t++) {
             blockers = moveBlizzards(blockers, m, n);
             blockersTillTimeT.add(new HashMap<>(blockers));
         }
